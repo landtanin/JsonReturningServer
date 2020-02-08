@@ -2,19 +2,26 @@ import Vapor
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
-    // Basic "It works" example
-    router.get { req in
-        return "It works!"
+    router.get("api", "consent") { req -> Consent in
+        let consent = Consent(thirdPartyName: "Monzo app", onBehalfOf: "Monzo", consentType: "accounts")
+        return consent
     }
     
-    // Basic "Hello, world!" example
-    router.get("hello") { req in
-        return "Hello, world!"
-    }
-
-    // Example of configuring a controller
-    let todoController = TodoController()
-    router.get("todos", use: todoController.index)
-    router.post("todos", use: todoController.create)
-    router.delete("todos", Todo.parameter, use: todoController.delete)
 }
+
+final class Consent: Encodable {
+    var thirdPartyName: String
+    var onBehalfOf: String
+    var consentType: String
+    
+    init(thirdPartyName: String,
+         onBehalfOf: String,
+         consentType: String) {
+        self.thirdPartyName = thirdPartyName
+        self.onBehalfOf = onBehalfOf
+        self.consentType = consentType
+    }
+}
+
+// a wrap around Swift Codable
+extension Consent: Content {}
